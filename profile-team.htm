@@ -1,0 +1,213 @@
+{% extends master.master %}
+{% block title %}{% T My team %} | {{ data.Business.Name }}{% endblock %}
+{% block content %}
+<div id="wrapper">
+  <!-- CONTAINER -->
+  <div id="main" class="container">
+
+
+    <!-- BREADCRUMB -->
+    <ul class="breadcrumb">
+      <li><a href="{% Url PublicHome, Index %}">{% T Home %}</a> <span class="divider">/</span></li>
+      <li class="active">{% T My Team %}</li>
+    </ul>
+    <!-- END BREADCRUMB -->
+
+
+    <div class="row">
+      <h2 class="page-title span12">{% T My team at {0} || data.Business.Name %}</h2>
+
+
+      <!-- CONTENT -->
+      <section id="content" class="span12">
+
+        <form action="{% Url Team, Profile %}" method="POST" enctype="multipart/form-data" id="profile-form">
+          <h3 id="personal-details">{% T Team Details %}</h3>
+          <input name="Team.Id" type="hidden" value="{{ data.Local.Team.Id }}" />
+          <div class="well">
+
+            <div class="row-fluid">
+              <div class="span9">
+                <div class="row-fluid">
+                  <div class="span6">
+                    <label for="Team_Name">{% T Team Name %} <span class="text-error">*</span></label>
+                    <input readonly="readonly" type="text" id="Team_Name" name="Team.Name" value="{{ data.Local.Team.Name }}" required="required" class="span12">
+                  </div>
+                  <div class="span6">
+                    <label for="Team_ProfileWebsite">{% T Website %} </label>
+                    <input placeholder="http://example.com" type="text" id="Team_ProfileWebsite" name="Team.ProfileWebsite" value="{{ data.Local.Team.ProfileWebsite }}" class="span12">
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span12">
+                    <label for="Team_ProfileTags">{% T Skills (separate by commas) %}</label>
+                    {% if data.Local.ProfileTags.size > 0 %}
+                    <input type="text" id="Team_ProfileTags" name="Team.ProfileTags" value="{{data.Local.Team.ProfileTags}}"  class="span12 multiple_select" style="display: none">
+                    <select multiple="multiple"  class="span12">
+                      {% for tag in data.Local.ProfileTags %}
+                      {% assign thisTag = tag | Downcase %}
+                      {{ thisTag }}
+                      <option {% if data.Local.Team.ProfileTags contains thisTag %}selected="selected"{% endif %}>{{thisTag}}</option>
+                      {% endfor %}
+                    </select>
+                    {% else %}
+                    <input id="Team_ProfileTags" maxlength="254" name="Team.ProfileTags" type="text" value="{{ data.Local.Team.ProfileTags }}" class="span12"/>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span12">
+                    <label for="Team_ProfileIsPublic" class="checkbox">
+                      {% if data.Local.Team.ProfileIsPublic %}
+                      <input id="Team_ProfileIsPublic" name="Team.ProfileIsPublic" type="checkbox" value="true" checked="checked"/>
+                      {% else %}
+                      <input id="Team_ProfileIsPublic" name="Team.ProfileIsPublic" type="checkbox" value="true"/>
+                      {% endif %}
+                      <input id="Team_ProfileIsPublic_Hidden" name="Team.ProfileIsPublic" type="hidden" value="false"/>
+                      {% T Publish team profile %}
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="span3">
+                <label for="Team_TeamLogo">{% T Logo %}</label>
+                {% if data.Local.Team.HasTeamLogo %}
+                <img class="img-polaroid" src="{% Url Team, GetAvatar, id: data.Local.Team.Id, h:140, w:140 %}" />
+                <br />
+                {% endif %}
+                <input type="file" name="Team_TeamLogo" id="Team_TeamLogo" class="span12" />
+                <br />
+                <small>{% T Max 10Mb. %}</small>
+              </div>
+            </div>
+
+          </div>
+          <div class="row-fluid">
+            <button type="submit" class="btn pull-right btn-orange">{% T Update %}</button>
+            <a href="#wrapper" class="btn pull-right btn-link">{% T Back %}</a>
+          </div>
+
+          <h3 id="personal-details">{% T Team Profile %}</h3>
+          <div class="well">
+            <div class="row-fluid">
+              <div class="span12">
+                <label for="Team_ProfileSummary">{% T Team Summary %}</label>
+                <textarea rows="5" id="Team_ProfileSummary" name="Team.ProfileSummary" class="span12" type="text">{{ data.Local.Team.ProfileSummary | StripHtml }}</textarea>
+              </div>
+            </div>
+            <div class="row-fluid">
+              <div class="span3">
+                <label for="Team_Twitter">Twitter</label>
+                <input value="{{ data.Local.Team.Twitter }}" type="text" name="Team.Twitter" id="Team_Twitter" class="span12" placeholder="@twitter">
+              </div>
+              <div class="span3">
+                <label for="Team_Facebook">Facebook</label>
+                <input value="{{ data.Local.Team.Facebook }}" type="text" name="Team.Facebook" id="Team_Facebook" class="span12" placeholder="https://www.facebook.com/zuck">
+              </div>
+              <div class="span3">
+                <label for="Team_Linkedin">Linkedin</label>
+                <input value="{{ data.Local.Team.Linkedin }}" type="text" name="Team.Linkedin" id="Team_Linkedin" class="span12" placeholder="http://www.linkedin.com/in/jeffweiner08">
+              </div>
+              <div class="span3">
+                <label for="Team_Skype">Skype</label>
+                <input value="{{ data.Local.Team.Skype }}" type="text" name="Team.Skype" id="Team_Skype" class="span12" placeholder="skype">
+              </div>
+            </div>
+          </div>
+
+          <div class="row-fluid">
+            <button type="submit" class="btn pull-right btn-orange">{% T Update %}</button>
+            <a href="#wrapper" class="btn pull-right btn-link">{% T Back %}</a>
+          </div>
+
+          <h3 id="personal-details">{% T Gallery %}</h3>
+          <div class="well">
+
+            <div class="row-fluid">
+              <div class="span4">
+                <label for="Team_Image1">{% T Image 1 %}</label>
+                {% if data.Local.Team.HasImage1 %}
+                <img class="img-polaroid" src="{% Url Team, GetImage1, id: data.Local.Team.Id, h:150, w:150 %}" />
+                <br />
+                {% endif %}
+                <input type="file" name="Team_TeamImage1" id="Team_TeamImage1" class="span12" />
+                <br />
+                <small>{% T Max 10Mb. %}</small>
+              </div>
+              <div class="span4">
+                <label for="Team_Image1">{% T Image 2 %}</label>
+                {% if data.Local.Team.HasImage2 %}
+                <img class="img-polaroid" src="{% Url Team, GetImage2, id: data.Local.Team.Id, h:150, w:150 %}" />
+                <br />
+                {% endif %}
+                <input type="file" name="Team_TeamImage2" id="Team_TeamImage2" class="span12" />
+                <br />
+                <small>{% T Max 10Mb. %}</small>
+              </div>
+              <div class="span4">
+                <label for="Team_Image1">{% T Image 3%}</label>
+                {% if data.Local.Team.HasImage3%}
+                <img class="img-polaroid" src="{% Url Team, GetImage3, id: data.Local.Team.Id, h:150, w:150 %}" />
+                <br />
+                {% endif %}
+                <input type="file" name="Team_TeamImage3" id="Team_TeamImage3" class="span12" />
+                <br />
+                <small>{% T Max 10Mb. %}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row-fluid">
+            <button type="submit" class="btn pull-right btn-orange">{% T Update %}</button>
+            <a href="#wrapper" class="btn pull-right btn-link">{% T Back %}</a>
+          </div>
+
+        </form>
+
+      </section>
+      <!-- END CONTENT -->
+
+    </div>
+  </div>
+  <!-- END CONTAINER -->
+</div>
+
+{% endblock %}
+{% block script %}
+
+
+
+<script>
+  $(function () {
+
+    $(".date").datetimepicker({ language: '{{ data.Language }}', format: "dd MM yyyy", minuteStep: 15, showMeridian: true, autoclose: true, minView: 2, startView: 4 });
+    $('#profile-form').h5Validate();
+
+    $('#profile-form button[type="submit"]').on('click', function () {
+      var result = $('#profile-form').h5Validate('allValid');
+      if (result == true) {
+        $('#profile-form button[type="submit"]').text('{% T Please wait... %}');
+        return true;
+      }
+      else {
+        showErrorMessage('{% T Please complete all the required fields %}');
+        return false;
+      }
+    });
+
+    $('.multiple_select').each(function(i, el){
+      var sel = $(el).siblings('select');
+      var tags = $(el).val();
+      sel.val(tags.split(','));
+
+      sel.chosen();
+      $(sel).change(function(){
+        var tags = sel.val().join();
+        $(el).val(tags);
+      });
+    });
+
+  });
+</script>
+{% endblock %}
