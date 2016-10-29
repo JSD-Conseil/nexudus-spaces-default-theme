@@ -17,7 +17,7 @@
     <!-- BREADCRUMB -->
     <ul class="breadcrumb">
       <li><a href="{% Url PublicHome, Index %}">{% T Home %}</a> <span class="divider">/</span></li>
-      <li><a href="{% Url Directory, Index %}">{% T People at {0} || data.Business.Name %}</a> <span class="divider">/</span></li>
+      <li><a href="{% Url Directory, Members %}">{% T People at {0} || data.Business.Name %}</a> <span class="divider">/</span></li>
       <li class="active">
         {{ data.Local.Coworker.FullName | StripHtml }}
       </li>
@@ -233,7 +233,7 @@
                       <label>
 
                         <input class="tag-checkbox" disabled="disabled" type="checkbox" checked="checked"/>
-                        <a class="tag-checkbox-link" href="{% Url Directory, Index, tag: tag.Tag %}">{{ tag.Tag }}</a>
+                        <a class="tag-checkbox-link" href="{% Url Directory, Members, tag: tag.Tag %}">{{ tag.Tag }}</a>
                         <span class="pull-right">[{{ tag.Count }}]</span>
                       </label>
 
@@ -245,7 +245,7 @@
                     <li class="other-tag {% if data.Local.Coworker.ProfileTags contains thisTag %}selected{% else %}hide{% endif %}">
                       <label>
                         <input class="tag-checkbox" disabled="disabled" type="checkbox" {% if data.Local.Coworker.ProfileTags contains thisTag %}checked{% endif %} data-tag="{{ tag.Tag }}"/>
-                        <a class="tag-checkbox-link" href="{% Url Directory, Index, tag: tag.Tag %}">{{ tag.Tag }}</a>
+                        <a class="tag-checkbox-link" href="{% Url Directory, Members, tag: tag.Tag %}">{{ tag.Tag }}</a>
                         <span class="pull-right">[{{ tag.Count }}]</span>
                       </label>
 
@@ -277,7 +277,7 @@
                     <li class="{% if data.Local.Coworker[cm.FieldName] == opt %}selected{% endif %}">
                       <label>
                         <input name="custom{{ cm.Id }}" class="cm-checkbox" disabled="disabled" type="radio" {% if data.Local.Coworker[cm.FieldName] == opt %}checked{% endif %} data-value="{{ opt }}" data-cmindex="{{ cm.CustomFieldIndex }}"/>
-                        <a href="{% Url Directory, Index %}?Custom{{ cm.CustomFieldIndex }}={{ opt }}" class="cm-checkbox-link">{{ opt }}</a>
+                        <a href="{% Url Directory, Members %}?Custom{{ cm.CustomFieldIndex }}={{ opt }}" class="cm-checkbox-link">{{ opt }}</a>
                       </label>
                     </li>
                     {% endfor %}
@@ -289,13 +289,13 @@
                     <li class="{% if data.Local.Coworker[cm.FieldName] == 'true' %}selected{% endif %}">
                       <label>
                         <input name="custom{{ cm.Id }}" class="cm-checkbox" disabled="disabled" type="radio" {% if data.Local.Coworker[cm.FieldName] == 'true' %}checked{% endif %} data-value="true" data-cmindex="{{ cm.CustomFieldIndex }}"/>
-                        <a href="{% Url Directory, Index %}?Custom{{ cm.CustomFieldIndex }}=true" class="cm-checkbox-link">{% T Yes %}</a>
+                        <a href="{% Url Directory, Members %}?Custom{{ cm.CustomFieldIndex }}=true" class="cm-checkbox-link">{% T Yes %}</a>
                       </label>
                     </li>
                     <li class="{% if data.Local.Coworker[cm.FieldName].size == 0' %}selected{% endif %}">
                       <label>
                         <input name="custom{{ cm.Id }}" class="cm-checkbox" disabled="disabled" type="radio" {% if data.Local.Coworker[cm.FieldName] == null %}checked{% endif %} data-value="" data-cmindex="{{ cm.CustomFieldIndex }}"/>
-                        <a href="{% Url Directory, Index %}?Custom{{ cm.CustomFieldIndex }}=" class="cm-checkbox-link">{% T No %}</a>
+                        <a href="{% Url Directory, Members %}?Custom{{ cm.CustomFieldIndex }}=" class="cm-checkbox-link">{% T No %}</a>
                       </label>
                     </li>
                   </ul>
