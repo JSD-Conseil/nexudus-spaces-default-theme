@@ -219,9 +219,7 @@
             <a href="{% Url Directory, Profile, Id: member.Id, name: member.FullName | Clean %}">
             {{ member.FullName }}
             </a>
-            {% if member.Id != data.Coworker.Id %}
-            <a class="btn btn-mini btn-link" href="/en/user/login?t={{ member.User.AccessToken }}&returnurl={% Url Profile, Index %}">{% T Access Account %}</a>
-            {% endif %}
+            [{{ member.FullName.Tariff.Name }}]
             {% endDivRow %}
 
           </div>
