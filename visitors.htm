@@ -1,0 +1,65 @@
+{% extends master.master %}
+{% block content %}
+<div id="wrapper">
+  <!-- CONTAINER -->
+  <div id="main" class="container">
+
+    
+
+    <div class="row">
+      <h2 class="page-title span12">{% T Your Visitors %}</h2>
+      <!-- CONTENT -->
+      <section id="content" class="span12">
+        {% if  data.Local.Visitors.size == 0 %}
+        <div class="alert alert-success">
+          {% T You don't have any upcoming visitors %}
+        </div>
+        {% endif %}
+        <form action="NewVisitor" method="POST">
+          <div class="row-fluid">
+            <div class="span1">
+              <span aria-hidden="true" class="icon i-16 icon-plus" style="margin-top: 5px"></span>
+            </div>
+            <div class="span4">
+              <input type="text" value="{{ data.Local.Visitor.FullName }}" placeholder="{% T Full Name %}" name="Visitor.FullName" />
+              <span class="text-error">*</span>
+            </div>
+            <div class="span3">
+              <input type="text" value="{{ data.Local.Visitor.Email }}" placeholder="{% T Email %}" name="Visitor.Email" />
+              <span class="text-error">*</span>  
+            </div>
+            <div class="span3">
+              <input type="text" value="{% if data.Local.Visitor.ExpectedArrival != null %}{{ data.Local.Visitor.ExpectedArrival | FormatDate: 'yyyy-MM-dd HH:mm' }}{% endif %}" placeholder="{% T Arrival Time %}" class="datetime" name="Visitor.ExpectedArrival" />
+              <span class="text-error">*</span>
+            </div>
+            <div class="span1">
+              <button type="submit" class="btn btn-mini btn-orange">{% T Add %}</a>
+            </div>
+          </div>
+          {% for visitor in data.Local.Visitors %}
+          <div class="row-fluid">
+            <div class="span1"><span aria-hidden="true" class="icon i-16 icon-user"></span></div>
+            <div class="span4"><strong>{{ visitor.FullName }}</strong></div>
+            <div class="span3"><a href="mailto:{{visitor.Email}}">{{ visitor.Email }}</a></div>
+            <div class="span3">{{ visitor.ExpectedArrival | FormatDate: 'F' }}</div>
+            <div class="span1">
+              <button type="button" onclick="if(confirm('{% T Remove visitor? %}')) window.location='{% Url Profile, DeleteVisitor, Id: visitor.Id %}';" class="btn btn-mini btn-orange">{% T Remove %}</a></div>
+          </div>
+          {% endfor %}
+        </form>
+        
+      </section>
+      <!-- END CONTENT -->
+    </div>
+  </div>
+  <!-- END CONTAINER -->
+   
+
+{% endblock %}
+{% block script %}
+<script>
+  $(function(){
+    $(".datetime").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "yyyy-mm-dd HH:ii", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 3 });
+  })
+</script>
+{% endblock %}
