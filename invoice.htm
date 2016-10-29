@@ -151,7 +151,7 @@
           <tr id="due_tr">
             <td colspan="3" class="total">
               {% T Due %}
-              (<span class="currency">{{ data.Local.Invoice.Currency.Code  }}</span>):
+              (<span class="currency">{{ data.Local.Invoice.TransactionCurrency.Code  }}</span>):
             </td>
             <td class="total">
               {{ data.Local.Invoice.TransactionTotalAmount | FormatDecimal: 'N' }}
