@@ -82,6 +82,18 @@
           <label>{% T Resource %}</label>
           {% ResourcesDropdown 0, Booking.Resource, span12 %}
         </div>
+
+        {% if data.Local.AllShifts.size > 0 %}
+        <div class="row-fluid">
+          <div class="span12">
+            <select id="time_select" class="span12">
+              {% for shift in data.Local.AllShifts %}
+              <option class="resource-time resource-{{shift.ResourceId}}" value="{{ shift.Start }}|{{ shift.End }}">{% T shift.Name %}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        {% endif %}
         <div class="row-fluid">
           <div class="span6">
             <label>{% T From %}</label>
@@ -145,6 +157,28 @@
             <textarea class="span12" id="Booking_Notes" name="Booking.Notes"></textarea>
           </div>
         </div>
+        <div class="row-fluid">
+          <label>{% T Visitors %}</label>
+        </div>
+        <div data-bind="foreach: bookingVisitors">
+          <input type="hidden" data-bind="attr: { name: 'Booking.BookingVisitors[' + $index() + '].Id' }, value: Id" />
+          <div class="row-fluid">
+            <div class="span6">
+              {% T Full Name %}:
+              <input type="text"  placeholder="{%T Full Name %}" data-bind="value: FullName, attr: { name: 'Booking.BookingVisitors[' + $index() + '].Visitor.FullName' }"></span>
+              <small>
+                <a href="#" data-bind="click: $root.removeVisitor">{% T Remove Visitor %}</a>
+              </small>
+            </div>
+            <div class="span6">
+              {% T Email %}:
+              <input type="email"  placeholder="{%T Email %}" data-bind="value: Email, attr: { name: 'Booking.BookingVisitors[' + $index() + '].Visitor.Email' }"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <a href="#" data-bind="click: addVisitor">{% T Add Visitor %}</a>
+        </div>
 
       </div>
     </div>
@@ -187,7 +221,7 @@
       $('#save-booking-button').attr('disabled', null);
     });
   }
-  function createBooking(date) {
+  function createBooking(start, end) {
 
     $('#Booking_To').datetimepicker('setStartDate', null);
     $('#Booking_From').datetimepicker('setStartDate', null);
@@ -204,6 +238,10 @@
 
 
       var $f = $('#modal_booking form');
+	    $('#modal_booking').on('shown',function(){
+        var offset = 200;
+        $(this).find('.modal-body').attr('style','max-height:'+($(window).height()-offset)+'px !important;');
+      });
       $('#modal_booking').modal('show');
 
       $('#booking_id').val(0);
@@ -213,15 +251,18 @@
       $('#Booking_To').datetimepicker('setEndDate', null);
       $('#Booking_From').datetimepicker('setEndDate', null);
 
-      $('#Booking_From').datetimepicker('setDate', date);
-      $('#Booking_To').datetimepicker('setDate', moment(date).add(1, 'hours').toDate());
+      $('#Booking_From').datetimepicker('setDate', start);
+      $('#Booking_To').datetimepicker('setDate', end || moment(start).add(1, 'hours').toDate());
 
       var rid = $('#resource-filter').val()
           if(rid) $('#Booking_Resource').val(rid);
 
       $('#delete-button').hide();
       vm.updateProducts();
+      vm.clearVisitors();
       setTimeout(checkBooking, 1000);
+
+      showHideDP();
      }
 
 
@@ -252,6 +293,7 @@
          $('#Booking_Notes').val(data.Value.Notes);
          setTimeout(checkBooking, 500);
          vm.updateProducts();
+         vm.updateVisitors();
        });
      }
 
