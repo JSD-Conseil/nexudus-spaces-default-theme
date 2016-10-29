@@ -8,17 +8,17 @@
     <ul class="breadcrumb">
       <li><a href="{% Url PublicHome, Index %}">{% T Home %}</a> <span class="divider">/</span></li>
       <li class="active">{% T Space resources %}</li>
-      
+
     </ul>
     <!-- END BREADCRUMB -->
     <div class="row">
-      
+
       <!-- CONTENT -->
       <section id="content" class="span9">
         {% for resource in data.Resources %}
         <article class="post" style="min-height: 285px">
           <h2 class="page-title"><a href="{% Url PublicResources, Details, id: resource.Id, name: resource.Name | Clean %}">{{ resource.Name }}</a></h2>
-          
+
           <!-- POST CONTENT -->
           <div class="body-content">
             <div class="row">
@@ -28,7 +28,7 @@
                   <img style="width: 100%" data-large-image="{% Url PublicResources, GetImage, id: resource.Id, h: 800, w: 800 %}" src="{% Url PublicResources, GetImage, id: resource.Id, h: 200, w: 200 %}" alt="{{ resource.Name }}" class="entry-image" />
                 </a>
                 <div class="clearfix"></div>
-                {% endif %}  
+                {% endif %}
               </div>
               <div class="{% if resource.HasImage %}span7{% else %}span12{% endif %}">
                 <p>{{ resource.Description }}</p>
@@ -110,14 +110,14 @@
           </div>
           <!-- END POST CONTENT -->
         </article>
-        
+
         {% endfor %}
-        
-        
-        
+
+
+
       </section>
       <!-- END CONTENT -->
-      
+
       <!-- SIDEBAR -->
       <aside id="sidebar-right" class="span3">
         {% if data.Setting_Social_Flickr != "" %}
@@ -152,8 +152,8 @@
         var originalFromDate;
 
         //Initialize timepickers
-        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
-        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
 
         $("#Booking_From input").attr('readonly', 'readonly');
         $("#Booking_To input").attr('readonly', 'readonly');
@@ -174,7 +174,7 @@
 
             originalFromDate = fromDate;
             originalToDate = later;
-
+			updateDP();
             checkBooking();
         });
 
@@ -251,6 +251,94 @@
         $.when(loadProducts())
          .then(mapData)
          .then(applyBindings);
-    });
+         //Shifts
+         $('#Booking_Resource').val({{ data.Local.Resource.Id }});
+         $('#Booking_Resource').change(showHideDP);
+         showHideDP();
+		 updateDP();
+         $('#time_select').change(updateDP);
+       });
+
+       function updateDP(){
+         var val = $('#time_select').val();
+         if(!val) return;
+
+         var h1 = val.split('|')[0].split(':')[0];
+         var h2 = val.split('|')[1].split(':')[0];
+
+         var m1 = val.split('|')[0].split(':')[1];
+         var m2 = val.split('|')[1].split(':')[1];
+
+         var start = $('#Booking_From').datetimepicker('getDate');
+         start.setHours(h1);
+         start.setMinutes(m1);
+
+         $('#Booking_From').datetimepicker('setDate',start);
+         var end = $('#Booking_To').datetimepicker('getDate');
+
+         end.setDate(start.getDate());
+         end.setHours(h2);
+         end.setMinutes(m2);
+         if(start > end)
+           end = moment(end).add('days',1).toDate();
+
+         $('#Booking_To').datetimepicker('setDate',end);
+
+         checkBooking();
+         getPrice();
+       }
+
+      function showHideDP(){
+          var rid = $('#Booking_Resource').val();
+          if(false)
+            var noop=true;
+          {% for shift in data.Local.AllShifts %}
+          else if(rid == {{ shift.ResourceId }})
+            disableDP();
+          {% endfor %}
+          else
+             enableDP();
+
+           $('.resource-time').prop('disabled', true);
+           $('.resource-' + rid).prop('disabled', false);
+           $('.resource-time').hide();
+           $('.resource-' + rid).show();
+
+           if($("#time_select").length > 0)
+             $("#time_select")[0].selectedIndex = $('.resource-' + rid).index();
+
+           updateDP();
+      }
+
+
+      function disableDP(){
+
+        //Disable datapickers
+        $('#Booking_To input').attr('readonly','readonly');
+        $('#Booking_To input').attr('disabled','disabled');
+        $('#Booking_To .add-on').hide();
+        $('#Booking_To').removeClass('input-append');
+
+        $('#time_select').closest('.row-fluid').show();
+
+        $('#Booking_To').datetimepicker('remove');
+        $('#Booking_From').datetimepicker('remove');
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+    }
+    function enableDP(){
+      //Disable datapickers
+      $('#Booking_To').addClass('input-append');
+      $('#Booking_To .add-on').show();
+      $('#Booking_To .add-on').css('display', 'inline-block');
+
+      $('#Booking_To').datetimepicker('remove');
+      $('#Booking_From').datetimepicker('remove');
+      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $('#time_select').closest('.row-fluid').hide();
+      checkBooking();
+      getPrice();
+    }
 </script>
 {% endblock %}
