@@ -224,6 +224,12 @@ a.thumbnail:focus {
     color: #primarycolor;
 }
 
+.square.orange {
+    background: #fff;
+    border: 5px solid #primarycolor;
+    color: #primarycolor;
+}
+
 .circle.white {
     background: #primarycolor;
     color: #fff;
