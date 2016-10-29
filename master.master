@@ -177,7 +177,8 @@
                     </tbody>
                 </table>
                 <div class="alert alert-info">
-                    {% T Please pay the bookings above within the next 15 minutes to make sure the booking slot is not made available to other members %}
+                    {% assign cancelMinutes = data.Setting_Bookings_CancelUnPaidBookingsAfter %}
+                    {% T Please pay the bookings above within the next {0} minutes to make sure the booking slot is not made available to other members || cancelMinutes %}
                 </div>
             </div>
             <!-- END MODAL BODY-->
