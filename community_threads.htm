@@ -63,7 +63,8 @@
       </div>
     </div>
 
-
+{% assign tag = data.QueryString["tag"] %}
+    {{ tag }}
     <div class="pull-right  visible-desktop">
       {% if data.Local.Threads.size > 0 %}
       {% if data.Coworker != null %}
@@ -227,6 +228,11 @@
                 <a href="{% Url Conversations, Index, query: tag %}" class="label label-info">#{{ tag }}</a>
                 {% endfor %}
                 {% if thread.Tags.size > 0 %} | {% endif %}
+
+                {% if thread.BusinessId != data.Business.Id %}
+                <a href="//{{ thread.BusinessWebAddress }}.{{ data.PublicSiteSubDomain }}{{ data.URL }}" class="label label-info label-inverse">{{ thread.BusinessName }}</a>
+                |
+                {% endif %}
                 {% if thread.GroupId > 0 %}
                 <a href="{% Url Conversations, Group, id: thread.GroupId, name: thread.GroupName %}" class="label label-info label-inverse">{{ thread.GroupName }}</a>
                 |
