@@ -186,7 +186,9 @@
                 {% if data.Coworker.TotalRemainingBookingCredit > 0 %}
                 <tr>
                   <td>
-                    {{ data.Coworker.TotalTotalBookingCredit | FormatDecimal format: 'N2' }} {% T Booking Credit %}
+                    {{ data.Business.Currency.Code }}
+                    {{ data.Coworker.TotalTotalBookingCredit | FormatDecimal format: 'N2' }}
+                    {% T Booking Credit %}
                   </td>
                   <td>
                     <p class="text-right">
@@ -356,7 +358,7 @@
             </div>
 
             <p class="pull-right">
-              <a href="{% Url Bookings, Index %}" class="btn btn-orange">{% T Make a booking %}</a>
+              <a href="{% Url Bookings, Calendar %}" class="btn btn-orange">{% T Make a booking %}</a>
             </p>
 
             <!-- EXTRA SERVICES END -->
