@@ -1,0 +1,511 @@
+{% extends master.master %}
+{% block title %}{% T Space resources %} | {{ data.Business.Name }}{% endblock %}
+{% block content %}
+<div id="wrapper">
+  <!-- CONTAINER -->
+  <div id="main" class="container">
+    <!-- BREADCRUMB -->
+    <ul class="breadcrumb">
+      <li><a href="{% Url PublicHome, Index %}">{% T Home %}</a> <span class="divider">/</span></li>
+      <li><a href="{% Url Bookings, Calendar %}">{% T Events and bookings %}</a> <span class="divider">/</span></li>
+      <li class="active">{% T Search %}</li>
+
+    </ul>
+    <!-- END BREADCRUMB -->
+
+    <div class="navbar hidden-phone">
+      <div class="navbar-inner">
+        <div class="container" style="width: auto; padding: 0 20px;">
+          <ul class="nav">
+            <li class=""><a data-url="{% Url Bookings, Calendar  %}" href="{% Url Bookings, Calendar, date: data.Local.StartDate | FormatDate: 'yyyy-MM-dd' %}">{% T Calendar %}</a></li>
+            <li class="active"><a data-url="{% Url Bookings, Search %}" href="{% Url Bookings, Search %}">{% T Search %}</a></li>
+
+
+          </ul>
+
+          <ul class="nav pull-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% if data.Local.Resource != null %}
+                {{ data.Local.Resource.Name | TruncateWords: 3 }}
+                {% else %}
+                {% T Resources %}
+                {% endif %}
+                <b class="caret" style="margin-top: 8px"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% Url Bookings, Calendar %}">{% T Show all resources %}</a></li>
+                {% for resource in data.Resources %}
+                <li class="{% if data.Local.Resource.Id == resource.Id %}active{% endif %}"><a data-url="{% Url Bookings, Calendar, ResourceId: resource.Id, showAll: data.Local.ShowAll %}" href="{% Url Bookings, Calendar, ResourceId: resource.Id, showAll: data.Local.ShowAll %}">{{ resource.Name }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+
+            <li class="divider-vertical"></li>
+            <li>
+              {% if data.Coworker != null or data.Setting_Bookings_EnableGuestBookings %}
+              <a href="#" onclick="createBooking($('#FromDate').datetimepicker('getDate'), $('#ToDate').datetimepicker('getDate'));return false;"><strong>{% T Make a booking %}</strong></a>
+              {% else %}
+              <a href="{% Url Login, Index, lang: data.Language %}&returnUrl=/{{ data.Language }}/bookings">{% T Log in %}</a>
+              {% endif %}
+            </li>
+
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <section class="span12">
+         <form id="serachForm" class="navbar-search pull-left">
+          <div class="row-fluid">
+            <div class="span4">
+              <h4>{% T Date %}</h4>
+              <div class="row-fluid">
+                <div class="span2">
+                  {% T From: %}
+                </div>
+                <div class="span10">
+                  <input type="text" id="FromDate" class="search-query span12">
+                  <input type="hidden" id="FromDateInput" name="start">
+                </div>
+              </div>
+              <div class="row-fluid">
+                <div class="span2">
+                  {% T To:%}
+                </div>
+                <div class="span10">
+                  <input type="text" id="ToDate"  class="search-query span12">
+                  <input type="hidden" id="ToDateInput" name="end">
+                </div>
+              </div>
+
+            </div>
+            <div class="span8">
+              <h4>{% T Features %}</h4>
+              {% DivRow field in data.Local.SearchFields, cols: 3, rowClass: '' %}
+              <div class="span4">
+                <label for="{{ field }}" class="checkbox">
+                  <input onclick="$('#serachForm').submit()" id="{{ field }}" name="{{ field }}" type="checkbox" value="true" {% if data.QueryString[field] == 'true' %}checked="checked"{% endif %} />
+                  {% T field %}
+                </label>
+              </div>
+              {% endDivRow %}
+            </div>
+           </div>
+           <div class="row">
+
+             <div class="span12">
+               <h4>{% T Type %}</h4>
+
+               {% DivRow field in data.Local.ResourceTypes, cols: 4 %}
+               <div class="span3">
+                 <label for="type_{{ field.Id }}" class="checkbox">
+
+                   <input onclick="$('#serachForm').submit()" id="type_{{ field.Id }}" name="type" type="checkbox" value="{{ field.Id }}" {% if data.QueryString["type"] contains field.IdString %}checked="checked"{% endif %} />
+                   {% T field.Name %}
+                 </label>
+               </div>
+               {% endDivRow %}
+             </div>
+
+             </div>
+          <div class="row">
+            <div class="span12">
+              <input type="submit" class="btn btn-orange" value="{% T Search %}" />
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="row">
+      <!-- CONTENT -->
+      <section id="content" class="span12">
+        {% if data.Local.Resources.size == 0 %}
+        <p class="alert alert-warning">
+          {% T Sorry, there are not resources available meeting your search criteria %}
+          <a href="{% Url Bookings, Calendar, date: data.Local.StartDate | FormatDate: 'yyyy-MM-dd' %}">{% T Search for other resources or dates or browse the calendar %}</a>
+        </p>
+        {% endif %}
+        {% DivRow resource in data.Local.Resources cols:2 %}
+        <article class="post span6 {% if resource.IsAvailable == false %}muted-thread{% endif %}">
+          <h2 class="page-title"><a href="{% Url PublicResources, Details, id: resource.Id, name: resource.Name | Clean %}">{{ resource.Name }}</a></h2>
+
+          <!-- POST CONTENT -->
+          <div class="body-content">
+            <div class="row-fluid"  style="min-height: 200px">
+              {% if resource.HasImage %}
+              <div class="span4">
+                <a href="{% Url PublicResources, Details, id: resource.Id, name: resource.Name | Clean %}" class="thumbnail pull-left">
+                  <img style="width: 100%" data-large-image="{% Url PublicResources, GetImage, id: resource.Id, h: 800, w: 800 %}" src="{% Url PublicResources, GetImage, id: resource.Id, h: 200, w: 200 %}" alt="{{ resource.Name }}" class="entry-image" />
+                </a>
+                <div class="clearfix"></div>
+              </div>
+              {% endif %}
+              <div class="{% if resource.HasImage %}span8{% else %}span12{% endif %}">
+                <p>{{ resource.Description }}</p>
+                <p>
+                  <a href="{% Url PublicResources, Details, id: resource.Id, name: resource.Name | Clean %}">{% T View more details  %}</a>
+                  |
+                  <a href="javascript: window.prompt('{{ resource.Name }}. Calendar URL:','http://{{ data.Domain }}{% Url Feeds, ResourceBookings, guid: resource.UniqueId %}');">{% T Calendar Feed %}</a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="span9">
+              <p class="resource_features">
+                {% if resource.Allocation > 0 %}
+                <span class="btn btn-grey">
+                  <strong>{{resource.Allocation}}</strong>
+                  <span aria-hidden="true" class="icon i-16 icon-user"></span>
+                </span>
+                {% endif %}
+                {% if resource.Projector %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Projector %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-camera-2"></span></span>
+                {% endif %}
+                {% if resource.Internet %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Internet %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-globe"></span></span>
+                {% endif %}
+                {% if resource.ConferencePhone %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Conference phone %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-tree"></span></span>
+                {% endif %}
+                {% if resource.StandardPhone %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Phone %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-phone"></span></span>
+                {% endif %}
+                {% if resource.WhiteBoard %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Whiteboard / flipboard %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-signup"></span></span>
+                {% endif %}
+                {% if resource.LargeDisplay %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Large display %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-screen"></span></span>
+                {% endif %}
+                {% if resource.Catering %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Catering %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-food"></span></span>
+                {% endif %}
+                {% if resource.TeaAndCoffee %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Tea and coffee %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-mug"></span></span>
+                {% endif %}
+                {% if resource.Drinks %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Drinks %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-glass"></span></span>
+                {% endif %}
+                {% if resource.SecurityLock %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Lock %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-lock"></span></span>
+                {% endif %}
+                {% if resource.CCTV %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T CCTV %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-camera-2"></span></span>
+                {% endif %}
+                {% if resource.VoiceRecorder %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Voice recorder %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-radio-checked"></span></span>
+                {% endif %}
+                {% if resource.AirConditioning %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Air conditioning %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-dashboard"></span></span>
+                {% endif %}
+                {% if resource.Heating %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Heating %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-dashboard"></span></span>
+                {% endif %}
+                {% if resource.NaturalLight %}
+                <span data-toggle="popover" data-placement="top" data-content="{% T Natural light %}" data-trigger="hover" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-brightness-medium"></span></span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class="span12">
+              {% if resource.IsAvailable %}
+              <div class="text-center">
+                {% if data.Coworker != null or data.Setting_Bookings_EnableGuestBookings %}
+                <a href="#" onclick="$('#Booking_Resource').val({{ resource.Id }});createBooking($('#FromDate').datetimepicker('getDate'), $('#ToDate').datetimepicker('getDate'));return false;" class="btn btn-orange">{% T Make a booking %} ({{ resource.Price | FormatDecimal: resource.Business.Currency.Format }}) </a>
+                {% else %}
+                <a href="{% Url Login, Index, lang: data.Language %}&returnUrl={% Url PublicResources, Details, id: resource.Id, name: resource.Name | Clean %}" class="btn btn-orange">{% T Login to make a booking %}</a>
+                {% endif %}
+              </div>
+              {% else %}
+              <p style="color: red" class="alert alert-error">
+                {{ resource.Message }}
+              </p>
+              {% endif %}
+
+            </div>
+          </div>
+          <!-- END POST CONTENT -->
+        </article>
+
+        {% endDivRow %}
+
+
+
+      </section>
+      <!-- END CONTENT -->
+
+
+    </div>
+  </div>
+  <!-- END CONTAINER -->
+</div>
+{% include booking.htm %}
+{% endblock %}
+{% block script %}
+<script>
+    $(function () {
+        //init popovers
+        $('.resource_features span').popover();
+
+        var coeff = 1000 * 60 * 15;
+        var originalToDate;
+        var originalFromDate;
+      	var searchOriginalToDate;
+        var searchOriginalFromDate;
+
+        //Initialize timepickers
+
+      	$("#FromDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+        $("#ToDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+
+
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+
+        $("#Booking_From input").attr('readonly', 'readonly');
+        $("#Booking_To input").attr('readonly', 'readonly');
+
+        //Set default values
+      	$('#FromDate').datetimepicker('setDate', moment.utc('{{ data.Local.StartDate | FormatDate: 'yyyy-MM-dd HH:mm' }}').toDate());
+      	$('#ToDate').datetimepicker('setDate', moment.utc('{{ data.Local.EndDate | FormatDate: 'yyyy-MM-dd HH:mm' }}').toDate());
+
+      $('#serachForm').submit(function(){
+        var fromDate = moment($('#FromDate').datetimepicker('getDate'));
+        var toDate = moment($('#ToDate').datetimepicker('getDate'));
+        $("#FromDateInput").val(fromDate.format('YYYY-MM-DDTHH:mm'));
+        $("#ToDateInput").val(toDate.format('YYYY-MM-DDTHH:mm'));
+        return true;
+      })
+
+        //If todate is > from date, move to date ahead
+        $('#Booking_From').on('changeDate', function () {
+            var fromDate = $('#Booking_From').datetimepicker('getDate');
+            var toDate = $('#Booking_To').datetimepicker('getDate');
+            //Round the date
+            fromDate = new Date(Math.round(fromDate.getTime() / coeff) * coeff);
+            $('#Booking_From').datetimepicker('setDate', fromDate);
+
+            var diffInMinutes = moment.duration(moment(originalToDate).diff(originalFromDate)).asMinutes();
+            if (diffInMinutes < 60) diffInMinutes = 60;
+
+            var later = moment(fromDate).add(diffInMinutes, 'minutes').toDate();
+            $('#Booking_To').datetimepicker('setDate', later);
+
+            originalFromDate = fromDate;
+            originalToDate = later;
+			updateDP();
+            checkBooking();
+        });
+
+
+
+        //If todate is > from date, move from date back
+        $('#Booking_To').on('changeDate', function () {
+            var fromDate = $('#Booking_From').datetimepicker('getDate');
+            var toDate = $('#Booking_To').datetimepicker('getDate');
+
+            //Round the date
+            toDate = new Date(Math.round(toDate.getTime() / coeff) * coeff);
+            $('#Booking_To').datetimepicker('setDate', toDate);
+
+            if (fromDate > toDate) {
+                $('#Booking_From').datetimepicker('setDate', toDate);
+            }
+
+            originalFromDate = fromDate;
+            originalToDate = toDate;
+
+            checkBooking();
+        });
+
+      	//If todate is > from date, move to date ahead
+        $('#FromDate').on('changeDate', function () {
+            var fromDate = $('#FromDate').datetimepicker('getDate');
+            var toDate = $('#ToDate').datetimepicker('getDate');
+            //Round the date
+            fromDate = new Date(Math.round(fromDate.getTime() / coeff) * coeff);
+            $('#FromDate').datetimepicker('setDate', fromDate);
+
+            var diffInMinutes = moment.duration(moment(searchOriginalToDate).diff(searchOriginalFromDate)).asMinutes();
+            if (diffInMinutes < 60) diffInMinutes = 60;
+
+            var later = moment(fromDate).add(diffInMinutes, 'minutes').toDate();
+            $('#ToDate').datetimepicker('setDate', later);
+
+          	searchOriginalFromDate = fromDate;
+            searchOriginalToDate = toDate;
+
+          	$('#Booking_From').datetimepicker('setDate', fromDate);
+          	$('#Booking_To').datetimepicker('setDate', toDate);
+        });
+
+      	//If todate is > from date, move from date back
+        $('#ToDate').on('changeDate', function () {
+            var fromDate = $('#Booking_From').datetimepicker('getDate');
+            var toDate = $('#Booking_To').datetimepicker('getDate');
+
+            //Round the date
+            toDate = new Date(Math.round(toDate.getTime() / coeff) * coeff);
+            $('#Booking_To').datetimepicker('setDate', toDate);
+
+            if (fromDate > toDate) {
+                $('#Booking_From').datetimepicker('setDate', toDate);
+            }
+
+            searchOriginalFromDate = fromDate;
+            searchOriginalToDate = toDate;
+
+            $('#Booking_From').datetimepicker('setDate', fromDate);
+            $('#Booking_To').datetimepicker('setDate', toDate);
+
+        });
+
+        $('#modal_booking form').on("submit", function (event) {
+            var id = $('#booking_id').val();
+            var url;
+            if (id > 0)
+                url = '{% Url Bookings, BookingJson %}';
+            else
+                url = '{% Url Bookings, NewBookingJson %}';
+
+            var data = getBookingData();
+            postAndClose(url, data);
+            event.preventDefault();
+        });
+
+        $('#delete-button').click(function () {
+            if (confirm('{% T Cancel this booking? %}')) {
+                var url = '{% Url Bookings, DeleteJson %}';
+                var id = $('#booking_id').val();
+                postAndClose(url, { id: id });
+            }
+            return false;
+        });
+
+        $('#Booking_Resource').attr('data-bind', 'event: { change: updateProducts }');
+
+        var loadProducts = function () {
+            var bid = $('#booking_id').val();
+            if (bid && bid > 0)
+                return $.post('/en/bookings/GetResourceProducts?bookingId=' + bid + '&resourceId=' + $('#Booking_Resource').val());
+            else
+                return $.post('/en/bookings/GetResourceProducts?resourceId=' + $('#Booking_Resource').val());
+        }
+        var mapData = function (data) {
+            return vm.bookingProducts = ko.mapping.fromJS(data);
+        }
+        var updateData = function (data) {
+            return vm.bookingProducts = ko.mapping.fromJS(data, vm.bookingProducts);
+        }
+        var applyBindings = function () {
+            return ko.applyBindings(vm);
+        }
+        var updateProducts = function () {
+            $.when(loadProducts())
+             .then(updateData)
+             .then(checkBooking);
+        }
+        vm = {
+            bookingProducts: ko.observableArray(),
+            updateProducts: updateProducts,
+            checkBooking: checkBooking
+        };
+
+        $.when(loadProducts())
+         .then(mapData)
+         .then(applyBindings);
+         //Shifts
+         $('#Booking_Resource').val({{ data.Local.Resource.Id }});
+         $('#Booking_Resource').change(showHideDP);
+         showHideDP();
+		 updateDP();
+         $('#time_select').change(updateDP);
+       });
+
+       function updateDP(){
+         var val = $('#time_select').val();
+         if(!val) return;
+
+         var h1 = val.split('|')[0].split(':')[0];
+         var h2 = val.split('|')[1].split(':')[0];
+
+         var m1 = val.split('|')[0].split(':')[1];
+         var m2 = val.split('|')[1].split(':')[1];
+
+         var start = $('#Booking_From').datetimepicker('getDate');
+         start.setHours(h1);
+         start.setMinutes(m1);
+
+         $('#Booking_From').datetimepicker('setDate',start);
+         var end = $('#Booking_To').datetimepicker('getDate');
+
+         end.setDate(start.getDate());
+         end.setHours(h2);
+         end.setMinutes(m2);
+         if(start > end)
+           end = moment(end).add('days',1).toDate();
+
+         $('#Booking_To').datetimepicker('setDate',end);
+
+         checkBooking();
+         getPrice();
+       }
+
+      function showHideDP(){
+          var rid = $('#Booking_Resource').val();
+          if(false)
+            var noop=true;
+          {% for shift in data.Local.AllShifts %}
+          else if(rid == {{ shift.ResourceId }})
+            disableDP();
+          {% endfor %}
+          else
+             enableDP();
+
+           $('.resource-time').prop('disabled', true);
+           $('.resource-' + rid).prop('disabled', false);
+           $('.resource-time').hide();
+           $('.resource-' + rid).show();
+
+           if($("#time_select").length > 0)
+             $("#time_select")[0].selectedIndex = $('.resource-' + rid).index();
+
+           updateDP();
+      }
+
+
+      function disableDP(){
+
+        //Disable datapickers
+        $('#Booking_To input').attr('readonly','readonly');
+        $('#Booking_To input').attr('disabled','disabled');
+        $('#Booking_To .add-on').hide();
+        $('#Booking_To').removeClass('input-append');
+
+        $('#time_select').closest('.row-fluid').show();
+
+        $('#Booking_To').datetimepicker('remove');
+        $('#Booking_From').datetimepicker('remove');
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+    }
+    function enableDP(){
+      //Disable datapickers
+      $('#Booking_To').addClass('input-append');
+      $('#Booking_To .add-on').show();
+      $('#Booking_To .add-on').css('display', 'inline-block');
+
+      $('#Booking_To').datetimepicker('remove');
+      $('#Booking_From').datetimepicker('remove');
+      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $('#time_select').closest('.row-fluid').hide();
+      checkBooking();
+      getPrice();
+    }
+</script>
+{% endblock %}
