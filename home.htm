@@ -108,10 +108,10 @@
 
         <!-- wellcome_block -->
         <div class="wellcome_block span3">
-          <a href="{% Url Bookings, Index %}"><span aria-hidden="true" class="icon i-32 icon-calendar circle orange"></span></a>
+          <a href="{% Url Bookings, Calendar %}"><span aria-hidden="true" class="icon i-32 icon-calendar circle orange"></span></a>
           <h3 class="subheader">{% T What's on %}</h3>
           <p>{% T Activities and events at {0}. Make your own booking request. || data.Business.Name %}</p>
-          <a href="{% Url Bookings, Index %}" class="btn btn-orange"><span aria-hidden="true" class="icon i-16 icon-calendar"></span>{% T Calendar %}</a>
+          <a href="{% Url Bookings, Calendar %}" class="btn btn-orange"><span aria-hidden="true" class="icon i-16 icon-calendar"></span>{% T Calendar %}</a>
         </div>
         <!-- END wellcome_block -->
 
@@ -177,7 +177,7 @@
 		  {% endif %}
         </h3>
         <a href="{% Url Contact, Index %}" class="btn btn-orange btn-large">{% T Contact %}</a>
-        <a href="{% Url Bookings, Index %}" class="btn btn-orange btn-large">{% T Make a booking %}</a>
+        <a href="{% Url Bookings, Calendar %}" class="btn btn-orange btn-large">{% T Make a booking %}</a>
       </div>
     </div>
     <!-- END CONTAINER -->
@@ -343,7 +343,7 @@
                         <br/>
                         <small>
 
-                          {% T From {0} {1} ||  service.Price  || service.Currency.Code %}
+                          :
                           -
                           <a onclick="window.location='{% Url Signup, Index %}?priceplanid={{ service.Id }}'" href="{% Url Signup, Index %}?priceplanid={{ service.Id }}">{% T Signup %}</a>
                         </small>
@@ -386,7 +386,7 @@
                       {% assign servicePrice = service.Price | FormatDecimal: 'N2' %}
                       {% T From {0} {1} || servicePrice || service.Currency.Code %}
                       -
-                      <a href="{% Url Bookings, Index %}">{% T Book %}</a>
+                      <a href="{% Url Bookings, Calendar %}">{% T Book %}</a>
                       {% if data.Resources.size > 0 %}
                       - <a href="{% Url PublicResources, Index %}">{% T View all resources %}</a>
                       {% endif %}
@@ -408,22 +408,23 @@
           <h3>{% T Products %}</h3>
 
           {% if data.Local.ProductGroups.size > 1 %}
-          <ul id="membershipTabs" class="nav nav-tabs">
+          <ul id="productTabs" class="nav nav-tabs">
             {% for group in data.Local.ProductGroups %}
-            <li class="{% if forloop.index0 == 0 %}active{% endif %}"><a href="#tariffs-{{group  | Clean }}" data-toggle="tab">{% T group  %}</a></li>
+            <li class="{% if forloop.index0 == 0 %}active{% endif %}"><a href="#products-{{group  | Clean }}" data-toggle="tab">{% T group  %}</a></li>
             {% endfor %}
           </ul>
           {% endif %}
           <div class="tab-content">
             {% for group in data.Local.ProductGroups %}
 
-            <div class="tab-pane {% if forloop.index0 == 0 %}active{% endif %}" id="tariffs-{{ group | Clean}}">
+            <div class="tab-pane {% if forloop.index0 == 0 %}active{% endif %}" id="products-{{ group | Clean}}">
               <div class="accordion" id="accordion-products-{{group  | Clean}}">
 
                 {% for service in data.Local.Products %}
                 {% if service.Tags contains group or (service.Tags == null and group == "Products") %}
                 <div class="accordion-group">
                   <div class="accordion-heading">
+
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-products-{{group  | Clean}}" href="#collapse-products-{{ group | Clean}}-{{ forloop.index0 }}">
                       <span aria-hidden="true" class="icon icon-plus i-16 circle white"></span>
                       <span aria-hidden="true" class="icon icon-minus i-16 circle white"></span> {{ service.Name }}
