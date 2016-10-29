@@ -12,7 +12,7 @@
     <!-- BREADCRUMB -->
     <ul class="breadcrumb">
       <li><a href="{% Url PublicHome, Index %}">{% T Home %}</a> <span class="divider">/</span></li>
-      <li><a href="{% Url Directory, Index %}">{% T People at {0} || data.Business.Name %}</a> <span class="divider">/</span></li>
+      <li><a href="{% Url Directory, Members %}">{% T People at {0} || data.Business.Name %}</a> <span class="divider">/</span></li>
       <li class="active"> {{ data.Local.Query | StripHtml }}</li>
     </ul>
     <!-- END BREADCRUMB -->
@@ -34,11 +34,11 @@
           </form>
         </div>
         <!-- END FILTER -->
-        
+
         <div class="row">
          <div class="span12">
-           
-           {% if data.Local.AllCoworkers.size == 0 %}
+
+           {% if data.Local.AllCoworkers.size == 0 and data.Local.Teams.size == 0 %}
            <div class="well well-large text-center">
              <h2>{% T No one here by that name... :( %}</h2>
              <div class="media comment comment-form">
@@ -46,7 +46,53 @@
              </div>
            </div>
            {% endif %}
-           
+           {% if data.Local.Teams.size != 0 %}
+           <table class="table table-hover coworkers-table">
+              <tbody>
+                {% for team in data.Local.Teams %}
+                <tr>
+                  <td style="width: 35px">
+                    <img class="img-circle"  src="{% Url Team, GetAvatar, Id: team.Id, h:35, w:35 %}" />
+                  </td>
+                  <td>
+                    <a href="{% Url Directory, Team, id: team.Id, name: team.Name | Clean %}">{{ team.Name }}</a>
+
+                  </td>
+                  <td style="width: 250px" class="hidden-phone hidden-tablet">
+                    {% if team.ProfileWebsite.size > 0 %}
+                      <a target="_blank" href="{{ team.ProfileWebsite }}">{{ coworker.CompanyName }}</a>
+                      <span aria-hidden="true" class="icon i-8 icon-new-tab"></span>
+
+                    {% endif %}
+                  </td>
+                  <td style="width: 275px" class="hidden-phone">
+                    <div class="text-right">
+                      {% if team.ProfileWebsite.size > 0 %}
+                      <a target="_blank" href="{{ team.ProfileWebsite }}" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-earth"></span></a>
+                      {% endif %}
+                      {% if team.Twitter.size > 0 %}
+                      <a target="_blank" href="http://twitter.com/{{ team.Twitter }}" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-twitter"></span></a>
+                      {% endif %}
+                      {% if team.Linkedin.size > 0 %}
+                      <a target="_blank" href="{{ team.Linkedin }}" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-linkedin"></span></a>
+                      {% endif %}
+                      {% if team.Facebook.size > 0 %}
+                      <a target="_blank" href="{{ team.Facebook }}" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-facebook"></span></a>
+                      {% endif %}
+                      {% if team.Skype.size > 0 %}
+                      <a href="callto://{{ team.Skype }}" class="btn btn-grey"><span aria-hidden="true" class="icon i-16 icon-skype"></span></a>
+                      {% endif %}
+                      &nbsp;
+                      
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+           {% endif %}
+
+
            <table class="table table-hover coworkers-table">
               <tbody>
                 {% for coworker in data.Local.AllCoworkers %}
@@ -101,10 +147,10 @@
             </table>
           </div>
         </div>
-        
+
       </section>
       <!-- END CONTENT -->
-      
+
     </div>
   </div>
   <!-- END CONTAINER -->
