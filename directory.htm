@@ -186,6 +186,7 @@
                         {% if pagedRecords.size == data.Local.Top %}
                         {% assign nextPage = data.Local.Page | Plus: 1 %}
                         <li><a href="{{ data.UrlPath }}?{{ data.UrlQuery | ReplaceQueryString: 'page', nextPage }}">{{ data.Local.Page | Plus: 1 }}</a></li>
+                        <li class="disabled"><a href="javascript:;">...</span></a></li>
                         <li>
                             <a href="{{ data.UrlPath }}?{{ data.UrlQuery | ReplaceQueryString: 'page', nextPage }}" aria-label="{% T Next %}">
                                 <span aria-hidden="true">&#8250;</span>
