@@ -43,7 +43,7 @@
             <div class="span3"><a href="mailto:{{visitor.Email}}">{{ visitor.Email }}</a></div>
             <div class="span3">{{ visitor.ExpectedArrival | FormatDate: 'F' }}</div>
             <div class="span1">
-              <button type="button" onclick="if(confirm('{% T Remove visitor? %}')) window.location='{% Url Profile, DeleteVisitor, Id: visitor.Id %}';" class="btn btn-mini btn-orange">{% T Remove %}</a></div>
+              <button type="button" onclick="if(confirm('{% T Remove visitor? %}')) window.location='{% Url Profile, DeleteVisitor, Id: visitor.Id %}';" class="btn btn-mini btn-orange">{% T Remove %}</button></div>
           </div>
           {% endfor %}
         </form>
