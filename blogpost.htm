@@ -22,7 +22,10 @@
 <!-- Open Graph data -->
 <meta property="og:title" content="{{ data.Local.BlogPost.Title | StripHtml }}" />
 <meta property="og:type" content="article" />
-{% if data.Local.BlogPost.HasImage %}
+{% if data.Local.BlogPost.HasLargeImage %}
+<meta property="og:image" content="http://{{ data.Business.WebAddress }}.{{ data.PublicSiteSubDomain }}{% Url Blog, GetLargeImage, id: data.Local.BlogPost.Id, w: 1170 %}" />
+<meta property="og:image:secure_url" content="https://{{ data.Business.WebAddress }}.{{ data.PublicSiteSubDomain }}{% Url Blog, GetImage, id: data.Local.BlogPost.Id, w: 200, h: 200 %}" />
+{% elseif data.Local.BlogPost.HasImage %}
 <meta property="og:image" content="http://{{ data.Business.WebAddress }}.{{ data.PublicSiteSubDomain }}{% Url Blog, GetImage, id: data.Local.BlogPost.Id, w: 200, h: 200 %}" />
 <meta property="og:image:secure_url" content="https://{{ data.Business.WebAddress }}.{{ data.PublicSiteSubDomain }}{% Url Blog, GetImage, id: data.Local.BlogPost.Id, w: 200, h: 200 %}" />
 {% endif %}
@@ -67,13 +70,13 @@
           <!-- END POST INFO -->
           <!-- POST CONTENT -->
           <div class="body-content" style="min-height: 240px;">
-            {% if data.Local.BlogPost.HasImage %}
+            {% if data.Local.BlogPost.HasLargeImage %}
             <a data-toggle="lightbox" href="#blog-image-{{data.Local.BlogPost.Id}}" class="thumbnail pull-left">
-              <img itemprop="image" src="{% Url Blog, GetImage, id: data.Local.BlogPost.Id, h: 220, w: 220 %}" alt="{{ data.Local.BlogPost.Title | StripHtml }}" class="entry-image" />
+              <img itemprop="image" src="{% Url Blog, GetLargeImage, id: data.Local.BlogPost.Id, h: 350, w: 1170 %}" alt="{{ data.Local.BlogPost.Title | StripHtml }}" class="entry-image" />
             </a>
             <div id="blog-image-{{data.Local.BlogPost.Id}}" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
               <div class="lightbox-content">
-                <img src="{% Url Blog, GetImage, id: data.Local.BlogPost.Id, w: 800 %}">
+                <img src="{% Url Blog, GetLargeImage, id: data.Local.BlogPost.Id, w: 1170 %}">
                 <div class="lightbox-caption"><p>{{ data.Local.BlogPost.Title }}</p></div>
               </div>
             </div>
