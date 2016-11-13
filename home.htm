@@ -117,10 +117,10 @@
 
         <!-- wellcome_block -->
         <div class="wellcome_block span3">
-          <a href="{% Url Directory, Index %}"><span aria-hidden="true" class="icon i-32 icon-link circle orange"></span></a>
+          <a href="{% Url Directory, Members %}"><span aria-hidden="true" class="icon i-32 icon-link circle orange"></span></a>
           <h3 class="subheader">{% T Members %}</h3>
           <p>{% T Who is already at {0}, their skills and what they offer. || data.Business.Name %}</p>
-          <a href="{% Url Directory, Index %}" class="btn btn-orange"><span aria-hidden="true" class="icon i-16 icon-address-book"></span>{% T Directory %}</a>
+          <a href="{% Url Directory, Members %}" class="btn btn-orange"><span aria-hidden="true" class="icon i-16 icon-address-book"></span>{% T Directory %}</a>
         </div>
         <!-- END wellcome_block -->
 
@@ -202,8 +202,8 @@
           </li>
         </ul>
         <a href="{% Url Blog, Read, Id: post.Id, title: post.Title | Clean %}">
-          {% if post.HasImage %}
-          <img class="img-polaroid" src="{% Url Blog, GetImage, id: post.Id, h: 175, w: 350 %}" alt="{{ post.Title | StripHtml }}" />
+          {% if post.HasLargeImage %}
+          <img class="img-polaroid" src="{% Url Blog, GetLargeImage, id: post.Id, h: 105, w: 350 %}" alt="{{ post.Title | StripHtml }}" />
           {% endif %}
         </a>
         <p style="margin-top:5px">
