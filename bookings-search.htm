@@ -259,12 +259,12 @@
 
         //Initialize timepickers
 
-      	$("#FromDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
-        $("#ToDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      	$("#FromDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
+        $("#ToDate").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
 
 
-        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
-        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
 
         $("#Booking_From input").attr('readonly', 'readonly');
         $("#Booking_To input").attr('readonly', 'readonly');
@@ -418,12 +418,17 @@
         $.when(loadProducts())
          .then(mapData)
          .then(applyBindings);
+         
          //Shifts
          $('#Booking_Resource').val({{ data.Local.Resource.Id }});
          $('#Booking_Resource').change(showHideDP);
          showHideDP();
-		 updateDP();
+		     updateDP();
          $('#time_select').change(updateDP);
+
+         //Discount box
+         var checkBookingThrottled = _.debounce(checkBooking, 1000);
+         $('#Booking_DiscountCode').keyup(checkBookingThrottled);
        });
 
        function updateDP(){
@@ -453,6 +458,8 @@
 
          checkBooking();
          getPrice();
+
+         
        }
 
       function showHideDP(){
@@ -490,8 +497,8 @@
 
         $('#Booking_To').datetimepicker('remove');
         $('#Booking_From').datetimepicker('remove');
-        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
-        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 2, minView: 2 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 2, minView: 2 });
     }
     function enableDP(){
       //Disable datapickers
@@ -501,8 +508,8 @@
 
       $('#Booking_To').datetimepicker('remove');
       $('#Booking_From').datetimepicker('remove');
-      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
-      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
+      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 1 });
       $('#time_select').closest('.row-fluid').hide();
       checkBooking();
       getPrice();

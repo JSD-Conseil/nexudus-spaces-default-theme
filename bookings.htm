@@ -4,7 +4,7 @@
 
 {% assign showMemberDetails = data.Setting_Calendars_ShowMemberDetailsInFeed %}
 {% assign defaultView = data.Setting_Calendars_DefaultView %}
-{% assign resourceInAgendaView = 4 %}
+{% assign resourceInAgendaView = 6 %}
 {% if defaultView == 1 and data.Resources.size > resourceInAgendaView %}{% assign defaultView = 'timelineDay' %}{% endif %}
 {% if defaultView == 1 and data.Resources.size <= resourceInAgendaView %}{% assign defaultView = 'agendaDay' %}{% endif %}
 {% if defaultView == 2 %}{% assign defaultView = 'agendaWeek' %}{% endif %}
@@ -144,6 +144,8 @@
     $('#Booking_Resource').prepend('<option></option>');
 
     var vm;
+    var originalToDate;
+    var originalFromDate;
     var fc = $('#calendar').fullCalendar({
         schedulerLicenseKey: '0011856468-fcs-1444557994',
         lang: '{{ data.Language }}',
@@ -153,9 +155,27 @@
         aspectRatio: 1.8,
       	height: 'auto',
         firstDay: 1,
-      	editable: false,
       	resourceLabelText: '{{ data.Business.Name | Replace: "'", "\'" }}',
       	resourceGroupField: 'groupName',
+        editable: false,
+        selectable: true,
+        selectHelper: true,
+        select: function(start, end, allDay, view, resourceObj) {
+            var calendar = $('#calendar');
+            if(resourceObj)
+                $('#Booking_Resource').val(resourceObj.id);
+            else
+                $('#Booking_Resource').val(null);
+            {% if data.Coworker != null %}
+            createBooking(start.local().toDate(), end.local().toDate());
+            {% elseif data.Setting_Bookings_EnableGuestBookings %}
+            createBooking(start.local().toDate(), end.local().toDate());
+            {% else %}
+            showWarningMessage('{% T Login to make a booking %}');
+            {% endif %}
+            calendar.fullCalendar('unselect');
+        },
+
      	viewRender: function (view) {
         	var date = view.intervalStart.format('YYYY-MM-DD');
           	$('a[data-url]').each(function(){
@@ -216,7 +236,6 @@
             {% endif %}
         },
         defaultView: $(window).width() < 768 ? 'list' : '{% if data.Local.Resource.Id > 0 %}agendaDay{% else %}{{defaultView}}{% endif %}',
-        editable: true,
         displayEventEnd: true,
         defaultDate: moment('{{ data.Local.CurrentDate | FormatDate: 'yyyy-MM-dd' }}'),
         header: {
@@ -291,8 +310,6 @@
     $(function () {
 
         var coeff = 1000 * 60 * 15;
-        var originalToDate;
-        var originalFromDate;
 
         //Resource filter
         $('#resource-filter').change(function(){
@@ -458,6 +475,10 @@
      	showHideDP();
 
     	$('#time_select').change(updateDP);
+
+        //Discount box
+        var checkBookingThrottled = _.debounce(checkBooking, 1000);
+        $('#Booking_DiscountCode').keyup(checkBookingThrottled);
     });
 
     function updateDP(){
@@ -524,8 +545,8 @@
 
         $('#Booking_To').datetimepicker('remove');
         $('#Booking_From').datetimepicker('remove');
-        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
-        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 2, minView: 2 });
+        $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 2, minView: 2 });
+        $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 2, minView: 2 });
     }
     function enableDP(){
 
@@ -535,8 +556,8 @@
 
       $('#Booking_To').datetimepicker('remove');
       $('#Booking_From').datetimepicker('remove');
-      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
-      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startDate: '+0d', startView: 1 });
+      $("#Booking_From").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true,  startView: 1 });
+      $("#Booking_To").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "dd MM yyyy - HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true,  startView: 1 });
        $('#time_select').closest('.row-fluid').hide();
        checkBooking();
        getPrice();
