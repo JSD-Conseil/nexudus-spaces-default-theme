@@ -147,7 +147,12 @@
             {% for invoice in data.Local.UnPaidInvoices %}
             <tr>
               <td><span aria-hidden="true" class="icon i-16 icon-warning"></span></td>
-              <td>{% T Invoice %} #{{invoice.InvoiceNumber}} - {{invoice.CreatedOn | Date: 'D'}} - <strong>{{ invoice.TotalAmount | FormatDecimal format: 'N2' }} {{ data.Business.Currency.Code }}</strong></td>
+                <td>
+                    {% T Invoice %} #{{invoice.InvoiceNumber}} - {{invoice.CreatedOn | Date: 'D'}} - <strong>{{ invoice.TotalAmount | FormatDecimal format: 'N2' }} {{ data.Business.Currency.Code }}</strong>
+                    {% if data.Coworker.CardNumber.size > 0 %}
+                    <br/><small>{% T To be paid using card ending in {0} on || data.Coworker.CardNumber %} {{invoice.DueDate | Date: 'D'}} </small>
+                    {% endif %}
+                </td>
               <td>
                 <div class=" pull-right">
 
