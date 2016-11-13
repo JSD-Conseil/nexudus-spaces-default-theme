@@ -136,6 +136,16 @@
           {% T Your price plan is due for renewal on {0}. || renewDateFormated %}
         </div>
         {% endif %}
+        {% if data.Coworker.DiscountCodes.size > 0 %}
+        <div class="alert alert-info">
+          <p>{% T You are using the discount codes listed below. Any available discounts will be applied at checkout. %}</p>
+          <ul>
+            {% for code in data.Coworker.DiscountCodes %}
+            <li><strong>{{ code.Code }}</strong>: {{ code.Description }}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
         <form action="{% Url Profile, Index %}" method="POST" enctype="multipart/form-data" id="profile-form">
           <h3 id="personal-details">{% T Personal Details %}</h3>
           <div class="well">

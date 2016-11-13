@@ -27,6 +27,7 @@
           <input type="hidden" name="teamGuid" value="{{ data.Local.TeamGuid }}" />
           <input type="hidden" name="tariffGuid" value="{{ data.Local.TariffGuid }}" />
           <input type="hidden" name="ReturnUrl" value="{{ data.Local.ReturnUrl }}" />
+          <input type="hidden" name="Coworker.RefererGuid" value="{{ data.Coworker.RefererGuid }}" />
 
           <h3>{% T Personal Details %}</h3>
           <div class="well">
@@ -63,6 +64,14 @@
               </div>
 
             </div>
+            {% if data.Local.HasDiscountCodes %}
+            <div class="row-fluid">
+              <div class="span4">
+                <label for="Coworker_DiscountCode">{% T Discount / Referral Code %}</label>
+                <input type="text" id="Coworker_DiscountCode" name="Coworker.DiscountCode" value="{{ data.Coworker.DiscountCode }}" class="span12">
+              </div>
+            </div>
+            {% endif %}
             {% if data.Local.Team == null %}
             <div class="row-fluid">
               <label for="Team_Details" class="checkbox">

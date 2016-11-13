@@ -522,6 +522,16 @@ header.navbar-static-top .nav>li>a:focus,
     background-color: #e5e5e5;
 }
 
+#referal-notice {
+    cursor: pointer;
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    z-index: 1000;
+    background-color: #primarycolor;
+}
+
 /* wrapper */
 #wrapper section {
     border-bottom: 1px solid #ccc;
@@ -953,6 +963,14 @@ footer .block .well.no-content p {
     padding-bottom: 15px;
 }
 
+/* bookings */
+.visitors {
+    padding-top: 10px;
+}
+.visitors .icon-remove {
+    margin-top: 25px;
+    margin-left: 10px;
+}
 
 /* media queries */
 
@@ -980,6 +998,11 @@ footer .block .well.no-content p {
 
     .navbar .btn-navbar {
         margin-top: 15px;
+    }
+
+    .visitors .icon-remove {
+        margin-top: 0px;
+        margin-left: 10px;
     }
 }
 
@@ -1242,8 +1265,7 @@ footer .block .well.no-content p {
     left: auto;
     right: 7px;
 }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     /*!
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 /*!
 * bootstrap-lightbox.css v0.6.1
 * Copyright 2013 Jason Butz
 * http://www.apache.org/licenses/LICENSE-2.0.txt
