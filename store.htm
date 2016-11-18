@@ -68,6 +68,16 @@
                     <table class="table" style="border-top: 1px solid black">
                         <tbody>
                             <tr>
+                                <th class="span9"><p class="text-right">{% T Discount Code %}</p></th>
+                                <th class="span3">
+                                    <input type="text" data-bind="value: discountCode, valueUpdate: 'keyup'" />
+                                    <div data-bind="with: discountCodeInfo">
+                                        <small data-bind="text: description"></small>
+                                        <small style="color: red" data-bind="text: discountMessage"></small>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
                                 <th class="span9"><p class="text-right">{% T One-off Payment: %}</p></th>
                                 <th class="span3">
                                     {{ data.Business.Currency.Code }}
@@ -156,5 +166,5 @@
     var productId = '{{ data.Local.ProductId }}';
     var tag = '{{ data.Local.Tag }}';
 </script>
-<script type="text/javascript" src="/content/themes/public/default/js/store.js"></script>
+<script type="text/javascript" src="/content/themes/public/default/js/store_v2.js"></script>
 {% endblock %}
