@@ -62,19 +62,6 @@
                     <input type="text" id="Coworker_Email" name="Coworker.Email" data-bind="value: coworker.email" class="span12">
                   </div>
                 </div>
-                <!--
-<div class="row-fluid">
-<div class="span12">
-<label for="Coworker_CreateUser" class="checkbox">
-<input id="Coworker_CreateUser" name="Coworker.CreateUser" type="checkbox" value="true" data-bind="checked: coworker.createUser"/>
-<input id="Coworker_CreateUser_Hidden" name="Coworker.CreateUser" type="hidden" value="false" />
-{% T Remember my details %}
-<br/>
-<small>{% T We will send you an email with your access details so you can quickly sign up to other events. %}</small>
-</label>
-</div>
-</div>
--->
               </div>
               {% if data.Local.Event.AskBuyerAddress %}
               <h3>{% T Account details %}</h3>
@@ -193,6 +180,16 @@
               </table>
               <table class="table" style="border-top: 1px solid black">
                 <tbody>
+					<tr>
+						<th class="span9"><p class="text-right">{% T Discount Code %}</p></th>
+						<th class="span3">
+							<input type="text" data-bind="value: discountCode, valueUpdate: 'keyup'" />
+							<div data-bind="with: discountCodeInfo">
+								<small data-bind="text: description"></small>
+								<small style="color: red" data-bind="text: discountMessage"></small>
+							</div>
+						</th>
+					</tr>
                   <tr data-bind="visible: availableCredit() > 0">
                     <th class="span10"><p class="text-right">{% T Event Credit: %}</p></th>
                     <th class="span2">
