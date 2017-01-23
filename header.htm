@@ -83,9 +83,9 @@
               {% endif %}
               <li class="{%if data.Controller == 'events'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Events, Index %}">{% T Events %}</a></li>
               {% if data.Resources.size > 0 %}
-              <li class="{%if data.Controller == 'bookings'  and data.Local.ShowAll %}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Bookings, Index %}">{% T Bookings %}</a></li>
+              <li class="{%if data.Controller == 'bookings'  and data.Local.ShowAll %}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Bookings, Calendar %}">{% T Bookings %}</a></li>
               {% endif %}
-              <li class="{%if data.Controller == 'directory'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Directory, Index %}">{% T Directory %}</a></li>
+              <li class="{%if data.Controller == 'directory'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Directory, Members %}">{% T Directory %}</a></li>
               {% if data.Setting_PublicWebSite_CommunityBoard %}
               <li class="{%if data.Controller == 'conversations'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Conversations, Index %}">{% T Community Board %}</a></li>
               {% endif %}
@@ -122,11 +122,12 @@
               <li class="{%if data.Controller == 'profile' and data.Action == 'index'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Profile, Index %}">{% T My profile %}</a></li>
               {% if data.Coworker.PaysForTeam != null %}
               <li class="{%if data.Controller == 'team' and data.Action == 'profile'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Team, Profile, id: data.Coworker.PaysForTeam.Id %}">{% T My team %}</a></li>
-              {% endif %}
+                {% endif %}
+               <li class="{%if data.Controller == 'profile' and data.Action == 'visitors' %}active{%endif%}""><a role="menuitem" tabindex="-1" href="{% Url Profile, Visitors %}">{% T Visitors %}</a></li>
               <li class="{%if data.Controller == 'invoices'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Invoices, Index %}">{% T Payments %}</a></li>
               <li class="{%if data.Controller == 'bookings'  and data.Local.ShowAll == false %}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Bookings, Index, ShowAll: false %}">{% T My Bookings %}</a></li>
               <li class="{%if data.Action == 'tariff'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Profile, Tariff %}">{% T Price plans %}</a></li>
-              <li class="{%if data.Controller == 'allowances'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Allowances, Index %}">{% T Allowances %}</a></li>
+                <li class="{%if data.Controller == 'allowances'%}active{%endif%}"><a role="menuitem" tabindex="-1" href="{% Url Allowances, Index %}">{% T Allowances %}</a></li>
 
               <li class="{%if data.Controller == 'store'%}active{%endif%} {% if data.ProductTags.size > 0 %} dropdown-submenu {% endif %}">
                 <a role="menuitem" tabindex="-1" href="{% Url Store, Products %}">{% T Additional Products %}</a>
