@@ -214,15 +214,53 @@
             else
                 return $.post('/en/bookings/GetResourceProducts?resourceId=' + $('#Booking_Resource').val());
         }
+
+        var loadVisitors = function() {
+            var bid = $('#booking_id').val();
+            if(bid && bid > 0)
+                return $.post('/en/bookings/GetBookingVisitors?bookingId=' + bid);
+            else
+                return [];
+        }
+
         var mapData = function (data) {
             return vm.bookingProducts = ko.mapping.fromJS(data);
         }
         var updateData = function (data) {
             return vm.bookingProducts = ko.mapping.fromJS(data, vm.bookingProducts);
         }
+
+        var mapVisitorData = function(data){
+            vm.bookingVisitors = ko.mapping.fromJS(data);
+        }
+        var updateVisitorData = function(data){
+            vm.bookingVisitors = ko.mapping.fromJS(data, vm.bookingVisitors);
+        }
+
+        var updateVisitors = function() {
+            $.when(loadVisitors())
+             .then(updateVisitorData);
+        }
+
+        var addVisitor = function(){
+            vm.bookingVisitors.push({
+                Id: null,
+                Email: null,
+                FullName: null
+            });
+        }
+
+        var removeVisitor = function(visitor){
+            vm.bookingVisitors.remove(visitor);
+        }
+        var clearVisitors = function(){
+            vm.bookingVisitors([]);
+        }
+
         var applyBindings = function () {
             return ko.applyBindings(vm);
         }
+
         var updateProducts = function () {
             $.when(loadProducts())
              .then(updateData)
@@ -231,12 +269,19 @@
         vm = {
             bookingProducts: ko.observableArray(),
             updateProducts: updateProducts,
-            checkBooking: checkBooking
+            checkBooking: checkBooking,
+            updateVisitors: updateVisitors,
+            addVisitor: addVisitor,
+            removeVisitor: removeVisitor,
+            clearVisitors: clearVisitors
         };
 
         $.when(loadProducts())
          .then(mapData)
+         .then(loadVisitors)
+         .then(mapVisitorData)
          .then(applyBindings);
+
          //Shifts
          $('#Booking_Resource').val({{ data.Local.Resource.Id }});
          $('#Booking_Resource').change(showHideDP);
