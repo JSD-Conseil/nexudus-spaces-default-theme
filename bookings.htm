@@ -166,6 +166,9 @@
                 $('#Booking_Resource').val(resourceObj.id);
             else
                 $('#Booking_Resource').val(null);
+            
+            if(end.hours() == 0) end = null;
+            
             {% if data.Coworker != null %}
             createBooking(start.local().toDate(), end.local().toDate());
             {% elseif data.Setting_Bookings_EnableGuestBookings %}
