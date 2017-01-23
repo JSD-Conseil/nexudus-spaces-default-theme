@@ -30,7 +30,7 @@
           <div class="carousel-inner">
             {% for image in data.Local.Gallery %}
             <div class="item {% if forloop.index0 == 0 %}active{% endif %}">
-              <img src="{% Url Content, Images, name: image.Name, w: 940, h: 450, mode: 'Crop' %}" alt="">
+              <img src="{% Url Content, Images, name: image.Name, w: 1170, h: 350, mode: 'Crop' %}" alt="">
             </div>
             {% endfor %}
           </div>
