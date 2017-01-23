@@ -99,7 +99,7 @@
       <div class="row">
         <!-- wellcome_block -->
         <div class="wellcome_block span3">
-          <a href="{% Url About, Index %}"><span aria-hidden="true" class="icon i-32 icon-home circle orange"></span></a>
+          <a href="{% Url About, Index %}"><span style="color: #414142" aria-hidden="true" class="icon i-32 icon-home circle orange"></span></a>
           <h3 class="subheader">{% T The space %}</h3>
           <p>{% T Find out about our space and the facilities available to our members. || data.Business.Name %}</p>
           <a href="{% Url About, Index %}" class="btn btn-orange"><span aria-hidden="true" class="icon i-16 icon-home"></span>{% T About us %}</a>
@@ -231,9 +231,9 @@
         </ul>
         <a href="{% Url Events, View, Id: event.Id, title: event.Name | Clean %}">
           {% if event.HasLargeImage %}
-          <img class="img-polaroid" src="{% Url Events, GetLargeImage, id: event.Id, h: 175, w: 350 %}" alt="{{ event.Name | StripHtml }}" />
+          <img class="img-polaroid" src="{% Url Events, GetLargeImage, id: event.Id, h: 105, w: 350 %}" alt="{{ event.Name | StripHtml }}" />
           {% elseif event.HasSmallImage %}
-          <img class="img-polaroid" src="{% Url Events, GetSmallImage, id: event.Id, h: 175, w: 350 %}" alt="{{ event.Name | StripHtml }}" />
+          <img class="img-polaroid" src="{% Url Events, GetSmallImage, id: event.Id, h: 105, w: 350 %}" alt="{{ event.Name | StripHtml }}" />
           {% endif %}
         </a>
         <p style="margin-top:5px">
@@ -341,12 +341,11 @@
                       <p>
                         {{ service.Description }}
                         <br/>
-                        <small>
-
-                          :
-                          -
-                          <a onclick="window.location='{% Url Signup, Index %}?priceplanid={{ service.Id }}'" href="{% Url Signup, Index %}?priceplanid={{ service.Id }}">{% T Signup %}</a>
-                        </small>
+                          <small>
+                              {% T From {0} {1} ||  service.Price  || service.Currency.Code %}
+                              -
+                              <a onclick="window.location = '{% Url Signup, Index %}?priceplanid={{ service.Id }}'" href="{% Url Signup, Index %}?priceplanid={{ service.Id }}">{% T Signup %}</a>
+                          </small>
                       </p>
                     </div>
                   </div>
