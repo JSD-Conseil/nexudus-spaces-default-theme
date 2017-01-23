@@ -433,7 +433,7 @@
               <input class="span6" id="state" name="credit_card[state]" type="text" value="{{ data.Coworker.StateForInvoice }}" />
             </div>
             <div class="controls">
-              <label class="span6" for="zip">{% T Zip %}</label>
+              <label class="span6" for="zip">{% T Post Code %}</label>
               <label class="span6" for="country">{% T Country %}</label>
             </div>
             <div class="controls">
@@ -564,6 +564,9 @@
       $('#ccform').attr('action', url);
       $('.invoiceNumber').text(invoiceNumber);
       el.modal();
+
+      var offset = 400;
+      el.find('.modal-body').attr('style','max-height:'+($(window).height()-offset)+'px !important;');
     });
 
     $('.spreedlyButton').click(function () {
@@ -575,6 +578,9 @@
       $('#spreedly-ccpay-button').text(txt);
       $('.invoiceNumber').text(invoiceNumber);
       el.modal();
+
+      var offset = 400;
+      el.find('.modal-body').attr('style','max-height:'+($(window).height()-offset)+'px !important;');
     });
 
     $('#spreedly-ccpay-button').click(function () {
