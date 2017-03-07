@@ -19,7 +19,7 @@
 
       <div class="row-fluid" id="registered-question">
         <div class="span12 text-center">
-          {% T Are you already registered or have used any services at {0}? || {{ data.Business.Name }} %}
+          {% T Are you already registered or have used any services at {0}? || data.Business.Name %}
           <br /><br />
           <a href="#" onclick="window.location='{% Url Login, Index, lang: data.Language %}&returnUrl={{ data.URL }}'" class="btn btn-success">{% T Yes %}</a>
           <a href="#" onclick="$('#continue-booking-button').show(); $('#registered-question').hide(); $('#quicksignup-details').show();" class="btn btn-danger">{% T No %}</a>
