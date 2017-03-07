@@ -59,7 +59,7 @@
 {% block script %}
 <script>
   $(function(){
-    $(".datetime").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "yyyy-mm-dd HH:ii", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 3 });
+    $(".datetime").datetimepicker({ viewSelect: 'year', pickerPosition: 'bottom-left', language: '{{ data.Language }}', format: "yyyy-mm-dd HH:ii P", minuteStep: 15, showMeridian: true, autoclose: true, todayBtn: true, startView: 3 });
   })
 </script>
 {% endblock %}
